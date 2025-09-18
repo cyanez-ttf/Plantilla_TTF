@@ -1,0 +1,29 @@
+name: Compilar LaTeX
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build_latex:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Instalar LaTeX
+        run: sudo apt-get update && sudo apt-get install -y \
+             texlive-latex-base texlive-latex-extra texlive-fonts-recommended \
+             texlive-lang-spanish texlive-bibtex-extra biber \
+             latexmk
+
+      - name: Compilar PDF
+        run: latexmk -pdf -interaction=nonstopmode -halt-on-error main.tex
+
+      - name: Subir PDF como artefacto
+        uses: actions/upload-artifact@v3
+        with:
+          name: memoria-taller
+          path: main.pdf
